@@ -13,9 +13,9 @@ InterSystems IRISでは、いくつかの方法でSQLを実行することがで
   LinuxやMacOSなどその他のOSでは、OSのターミナルを利用します。OSのターミナルからirisコマンドを実行します。ここで最後の"iris"はインスタンス名です。
 
 
-  ```shell
+  ```console
     
-    **iris session iris**
+    iris session iris⏎
 
     ノード: ec8e008bfccd インスタンス: IRIS
 
@@ -25,7 +25,7 @@ InterSystems IRISでは、いくつかの方法でSQLを実行することがで
   
 
     ```shell
-    SQLDEMO>do $system.SQL.Shell()
+    SQLDEMO>do $system.SQL.Shell()⏎
     SQL Command Line Shell
     ----------------------------------------------------
 
