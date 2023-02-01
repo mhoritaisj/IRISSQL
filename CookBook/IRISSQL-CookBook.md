@@ -202,6 +202,8 @@ USING {　
 
 - 結果の確認
 
+以下は、SQLシェルでLOAD TABLEを実行した結果です。
+
 ```console
 
 [SQL]SQLDEMO>>  << entering multiline statement mode, 'GO' to execute >>
