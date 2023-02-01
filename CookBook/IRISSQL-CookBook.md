@@ -160,7 +160,7 @@ CREATE INDEX文の詳細は、[ドキュメント](https://docs.intersystems.com
 テーブルにCSVファイルなどからデータをまとめてロードする方法を紹介します。
 
 ### LOAD TABLEコマンド
-まとまったデータを高速にロードするために、LOAD TABLEがあります。LOAD TABLEは、データのソースとしてCSVファイルとJDBCアクセスによるテーブルをサポートしています。以下では、CSVファイルからのロードについて紹介します。LOAD TABLEの詳細については、[ドキュメント](https://docs.intersystems.com/iris20221/csp/docbookj/DocBook.UI.Page.cls?KEY=RSQL_loaddata#RSQL_loaddata_desc_options)をご覧ください。
+まとまったデータを高速にロードするためにLOAD TABLEコマンドがあります。LOAD TABLEは、データのソースとしてCSVファイルとJDBCアクセスによるテーブルをサポートしています。以下では、CSVファイルからのロードについて紹介します。LOAD TABLEの詳細については、[ドキュメント](https://docs.intersystems.com/iris20221/csp/docbookj/DocBook.UI.Page.cls?KEY=RSQL_loaddata#RSQL_loaddata_desc_options)をご覧ください。
 
 
 - CSVファイルからのロード
@@ -254,7 +254,7 @@ LOAD TABLEの結果は、%SQL_Diag.Resultテーブルに保存されます。上
 
 次のように、%SQL_Diag.ResultテーブルのID=37のsqlcodeとinputRecordCountをSELECTすると、`sqlcode=0`(成功)、`inputRecordCount=47`（入力47件）であったことが確認できます。
 
-```sql
+```console
 [SQL]SQLDEMO>>select sqlcode, inputRecordCount from %SQL_Diag.Result where id=37
 16.     select sqlcode, inputRecordCount from %SQL_Diag.Result where id=37
 
