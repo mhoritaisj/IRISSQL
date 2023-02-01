@@ -204,7 +204,7 @@ USING {　
 
 以下は、SQLシェルでLOAD TABLEを実行した結果です。
 
-```console
+```shell
 
 [SQL]SQLDEMO>>  << entering multiline statement mode, 'GO' to execute >>
         1>>LOAD DATA FROM FILE '/durable/Prefectures.csv'
@@ -229,7 +229,7 @@ statement prepare time(s)/globals/cmds/disk: 0.0078s/2,180/33,995/0ms
 
 SELECTを実行して、データがロードされたかを確認してみます。
 
-```console
+```shell
 [SQL]SQLDEMO>>select * from Demo.Prefecture
 6.      select * from Demo.Prefecture
 
@@ -256,7 +256,7 @@ LOAD TABLEの結果は、%SQL_Diag.Resultテーブルに保存されます。上
 
 次のように、%SQL_Diag.ResultテーブルのID=37のsqlcodeとinputRecordCountをSELECTすると、`sqlcode=0`(成功)、`inputRecordCount=47`（入力47件）であったことが確認できます。
 
-```console
+```shell
 [SQL]SQLDEMO>>select sqlcode, inputRecordCount from %SQL_Diag.Result where id=37
 16.     select sqlcode, inputRecordCount from %SQL_Diag.Result where id=37
 
