@@ -1,8 +1,8 @@
 # InterSystems IRIS SQLクックブック
 
-このドキュメントは、InterSystems IRISでSQL文を実行するための基本的な事項や、役に立つヒントを記述しています。
+このドキュメントは、InterSystems IRISでリレーショナルアクセスを行う際、テーブルを定義したり、SQL文を実行したりするための基本的な事項や、役に立つヒントを記述しています。
 
-InterSystems IRISをインストールし、基本的な操作方法を習得されている方を想定しています。InterSystems IRISを初めて操作される方や、SQL以外のことについて知りたい方は、[開発者コミュニティの記事](https://jp.community.intersystems.com/node/484466)などを参考にしてください。
+このドキュメントの対象として、InterSystems IRISをインストールし、基本的な操作方法を習得されている方を想定しています。InterSystems IRISを初めて操作される方や、SQL以外のことについて知りたい方は、[開発者コミュニティの記事](https://jp.community.intersystems.com/node/484466)などを参考にしてください。
 
 ## SQL実行の方法
 InterSystems IRISでは、いくつかの方法でSQLを実行することができます。ここでは、対話的方法について紹介します。プログラムからSQLを実行する方法については、[クライアントアクセス](#クライアントアクセス)、[サーバでのSQL実行](#サーバでのsql実行)を参照してください。
@@ -46,7 +46,19 @@ InterSystems IRISでは、いくつかの方法でSQLを実行することがで
     [SQL]SQLDEMO>>
   ```
   
-  このプロンプトからSQL文を実行することができます。SQLシェルの詳細については[ドキュメント](https://docs.intersystems.com/iris20221/csp/docbookj/DocBook.UI.Page.cls?KEY=GSQL_shell#GSQL_shell_executemode)を参照してください。
+  このプロンプトからSQL文を実行することができます。
+  
+  次の例のように、プロンプトでリターンキーを押すと、複数行実行モードになります。
+
+  ```console
+    SQL]SQLDEMO>>  << entering multiline statement mode, 'GO' to execute >>
+        1>>
+  ```
+
+  複数行実行モードでは、プロンプトに行番号が表示されます。最後に`GO`と入力すると、文が実行されます。
+
+  
+  SQLシェルの詳細については[ドキュメント](https://docs.intersystems.com/iris20221/csp/docbookj/DocBook.UI.Page.cls?KEY=GSQL_shell#GSQL_shell_executemode)を参照してください。
 
 
 - 管理ポータル
@@ -61,7 +73,7 @@ InterSystems IRISでは、いくつかの方法でSQLを実行することがで
 
 
 ## テーブルの作成
-テーブルを作成するには、CREATE TABLE文を使用します。次の例は、コード、名称、カナ名の3つのフィールドを持つ都道府県テーブル(Demo.Prefecture)を定義しています。
+テーブルを作成するには、CREATE TABLE文を使用します。次の例は、団体コード、名称、カナ名の3つのフィールドを持つ都道府県テーブル(Demo.Prefecture)を定義しています。
 
 ```sql
 CREATE TABLE Demo.Prefecture (
@@ -71,11 +83,11 @@ CREATE TABLE Demo.Prefecture (
 )
 ```
 
-SQLシェルを使った実行例です。SQLシェルでは、SQL文を1行にまとめて実行する必要があることに注意してください。
+SQLシェルを使った実行例です。
 
 ```shell
 [SQL]SQLDEMO>>CREATE TABLE Demo.Prefecture (Code VARCHAR(6), Name VARCHAR(20), KanaName VARCHAR(50))
-2.      CREATE TABLE Demo.Prefecture (Code VARCHAR(6), Name VARCHAR(20), KanaName VARCHAR(50))
+1.      CREATE TABLE Demo.Prefecture (Code VARCHAR(6), Name VARCHAR(20), KanaName VARCHAR(50))
 
 0 Rows Affected
 statement prepare time(s)/globals/cmds/disk: 0.0066s/2,187/21,907/0ms
@@ -91,14 +103,14 @@ IRISでのテーブル名は、
 
 のように、スキーマ名でテーブル名を修飾できます。スキーマ名を省略した場合は、デフォルトで SQLUser というスキーマ名が付加されます。
 
-なお、スキーマ名は、複数の"."を使って階層的に定義することはできません。
+なお、スキーマ名は、複数の"."を使って階層的に定義することはできません。テーブル名とスキーマ名の規則に関する詳細は[こちら](https://docs.intersystems.com/iris20221/csp/docbookj/DocBook.UI.Page.cls?KEY=GSQL_tables#GSQL_tables_names)をご覧ください。
 
 CREATE TABLE文の詳細は、[こちら](https://docs.intersystems.com/iris20221/csp/docbookj/DocBook.UI.Page.cls?KEY=RSQL_CREATETABLE)をご覧ください。
 
 
-InterSystems IRISはマルチモデルデータベースです。リレーショナルデータベースのテーブルを作成すると、同時にクラス定義も生成されます。また、逆にクラス定義を行うと、同時にテーブルが作成されます。データは、リレーショナル、オブジェクト共通ですので、データを重複して保持する必要はありません。
+InterSystems IRISはマルチモデルデータベースです。リレーショナルデータベースのテーブルを作成すると、同時にクラス定義も生成されます。また、逆にクラス定義を行うと、同時にテーブルが生成されます。データは、リレーショナル、オブジェクト共通ですので、データを重複して保持する必要はありません。
 
-以下のクラス定義は、上のCREATE TABLEの結果、生成されるものです。テーブルのカラムに対応するプロパティや、デフォルトのインデックスが定義されているのがわかります。また、詳細は省略していますが、Storage定義では、テーブルのデータをIRISの「グローバル」という構造にどのように保存するのかが定義されています。
+以下のクラス定義は、上のCREATE TABLEの結果、生成されるものです。テーブルのフィールドに対応するプロパティや、デフォルトのインデックスが定義されているのがわかります。また、詳細は省略していますが、Storage定義では、テーブルのデータをIRISの「グローバル」という構造にどのように保存するのかが定義されています。
 
 ```
 Class Demo.Prefecture Extends %Persistent [ ClassType = persistent, DdlAllowed, Final, Owner = {irisowner}, ProcedureBlock, SqlRowIdPrivate, SqlTableName = Prefecture ]
@@ -121,13 +133,150 @@ Class Demo.Prefecture Extends %Persistent [ ClassType = persistent, DdlAllowed, 
 }
 ```
 
+## インデックスの作成
+
+一般のリレーショナルデータベースと同様に、InterSystems IRISでは、検索の高速化のためにテーブルの特定のフィールドにインデックスを張ることができます。
+
+インデックスを張るには、`CREATE INDEX`文を使用します。以下は、先ほど定義したDemo.Prefectureテーブルの団体コードフィールドにインデックスを張る例です。
+
+```
+
+CREATE UNIQUE INDEX CodeIdx On Demo.Prefecture (Code)
+
+```
+
+団体コードは都道府県ごとにユニークなので、`UNIQUE`キーワードを指定しています。
+
+CREATE INDEXを使用してインデックスを張ると、クラス定義にも次のような`Index`が生成されます。
+```
+
+Index CodeIdx On Code [ SqlName = CodeIdx, Type = index, Unique ];
+
+```
+
+CREATE INDEX文の詳細は、[ドキュメント](https://docs.intersystems.com/iris20221/csp/docbookj/DocBook.UI.Page.cls?KEY=RSQL_createindex)を参照してください。
 ## データのロード
 
-SMPウィザード
-### LOAD Table
+テーブルにCSVファイルなどからデータをまとめてロードする方法を紹介します。
+
+### LOAD TABLEコマンド
+まとまったデータを高速にロードするために、LOAD TABLEがあります。LOAD TABLEは、データのソースとしてCSVファイルとJDBCアクセスによるテーブルをサポートしています。以下では、CSVファイルからのロードについて紹介します。LOAD TABLEの詳細については、[ドキュメント](https://docs.intersystems.com/iris20221/csp/docbookj/DocBook.UI.Page.cls?KEY=RSQL_loaddata#RSQL_loaddata_desc_options)をご覧ください。
+
+
+- CSVファイルからのロード
+
+次のように、都道府県の団体コード、名称、カナ名称が含まれるCSVファイルがあるとします。1行目にはヘッダがあり、それぞれのフィールドには、`prefcode`, `kanjiname`, `kananame`という名前が付いています。
+
+```csv
+prefcode,kanjiname,kananame
+010006,北海道,ホッカイドウ
+020001,青森県,アオモリケン
+030007,岩手県,イワテケン
+...
+450006,宮崎県,ミヤザキケン
+460001,鹿児島県,カゴシマケン
+470007,沖縄県,オキナワケン
+```
+
+このファイルの名前を`/durable/Prefectures.csv`として、次のコマンドで、`Demo.Prefecture`テーブルにロードします。
+
+```sql
+
+LOAD DATA FROM FILE '/durable/Prefectures.csv'
+INTO Demo.Prefecture (Code, Name, KanaName)
+VALUES (prefcode, kanjiname, kananame)
+USING {　
+    "from":　{
+        "file":　{
+            "header":true, 
+            "charset": "UTF-8"
+        }
+    }
+}
+
+```
+
+`FROM FILE 'Prefectures.csv'`で入力ファイル名を、`INTO Demo.Prefecture (Code, Name, KanaName)`でロード対象のテーブル名とフィールド名を、`VALUES (prefcode, kanjiname, kananame)`で入力CSVファイルのヘッダーに定義されているフィールド名を指定しています。`INTO`と`VALUES`とで、指定するフィールドの順序と数が一致していることに注意してください。
+
+`USING`句では、入力ファイルの情報をjSON形式で指定しています。ここでは、1行目にヘッダーがあること、エンコーディングがUTF8であることを指定しています。
+
 - 結果の確認
 
-## インデックスの作成
+```console
+
+[SQL]SQLDEMO>>  << entering multiline statement mode, 'GO' to execute >>
+        1>>LOAD DATA FROM FILE '/durable/Prefectures.csv'
+        2>>INTO Demo.Prefecture (Code, Name, KanaName)
+        3>>VALUES (prefcode, kanjiname, kananame)
+        4>>USING {"from":{"file":{"header":true, "charset": "UTF-8"}}}
+        5>>go
+5.      LOAD DATA FROM FILE '/durable/Prefectures.csv'
+        INTO Demo.Prefecture (Code, Name, KanaName)
+        VALUES (prefcode, kanjiname, kananame)
+        USING {"from":{"file":{"header":true, "charset": "UTF-8"}}}
+
+[LOAD DATA's %SQL_Diag.Result.ID: <37>]
+47 Rows Affected
+statement prepare time(s)/globals/cmds/disk: 0.0078s/2,180/33,995/0ms
+          execute time(s)/globals/cmds/disk: 0.0942s/4,817/71,526/0ms
+                          cached query class: %sqlcq.SQLDEMO.cls37
+---------------------------------------------------------------------------
+[SQL]SQLDEMO>>
+
+```
+
+SELECTを実行して、データがロードされたかを確認してみます。
+
+```console
+[SQL]SQLDEMO>>select * from Demo.Prefecture
+6.      select * from Demo.Prefecture
+
+Code    Name    KanaName
+010006  北海道  ホッカイドウ
+020001  青森県  アオモリケン
+030007  岩手県  イワテケン
+...
+450006  宮崎県  ミヤザキケン
+460001  鹿児島県        カゴシマケン
+470007  沖縄県  オキナワケン
+
+47 Rows(s) Affected
+statement prepare time(s)/globals/cmds/disk: 0.0930s/46,412/310,519/0ms
+          execute time(s)/globals/cmds/disk: 0.0003s/48/3,992/0ms
+                          cached query class: %sqlcq.SQLDEMO.cls38
+---------------------------------------------------------------------------
+[SQL]SQLDEMO>>
+```
+
+47行がSELECTされたこと、PREPAREに0.093秒、実行に0.003秒かかったことが結果とともに表示されました。
+
+LOAD TABLEの結果は、%SQL_Diag.Resultテーブルに保存されます。上のLOAD TABLEの実行結果を見るとIDが37であることが表示されています。
+
+次のように、%SQL_Diag.ResultテーブルのID=37のsqlcodeとinputRecordCountをSELECTすると、`sqlcode=0`(成功)、`inputRecordCount=47`（入力47件）であったことが確認できます。
+
+```sql
+[SQL]SQLDEMO>>select sqlcode, inputRecordCount from %SQL_Diag.Result where id=37
+16.     select sqlcode, inputRecordCount from %SQL_Diag.Result where id=37
+
+sqlcode inputRecordCount
+0       47
+
+1 Rows(s) Affected
+statement prepare time(s)/globals/cmds/disk: 0.0701s/36,297/164,288/0ms
+          execute time(s)/globals/cmds/disk: 0.0002s/1/498/0ms
+                          cached query class: %sqlcq.SQLDEMO.cls43
+---------------------------------------------------------------------------
+[SQL]SQLDEMO>>
+```
+
+### 管理ポータル
+
+管理ポータルを使用してファイルからテーブルにデータをロードできます。詳細は[ドキュメント](https://docs.intersystems.com/iris20221/csp/docbookj/DocBook.UI.Page.cls?KEY=GSQL_impexp#GSQL_impexp_import)をご覧ください。
+
+
+
+
+## クライアントアクセス
 
 ## サーバでのSQL実行
   - サーバサイド
@@ -136,17 +285,21 @@ SMPウィザード
     - カスタムクエリ
     - Embedded Pythonによる記述
 
-## クライアントアクセス
 
 ## SQL文のテクニック
 
-### 日付
-
-### 文字列
+### データ型
+#### 日付
+#### 文字列
 
 ### エラーチェック
 
 ### ユーザ定義関数
+
+### 計算フィールド
+
+### 参照構文
+
 
 ## パフォーマンス
 ### クエリプラン
@@ -154,5 +307,6 @@ SMPウィザード
 ### インデックスの使い分け
 ### 統計情報
 
+## トランザクション処理
 ## マルチモデル
 
